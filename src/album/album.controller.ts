@@ -10,11 +10,12 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create.dto';
 import { AlbumResponseDto } from './dto/response.dto';
 
+@ApiTags('Albums')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumsService: AlbumService) {}

@@ -10,11 +10,12 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create.dto';
 import { TrackResponseDto } from './dto/response.dto';
 
+@ApiTags('Tracks')
 @Controller('track')
 export class TrackController {
   constructor(private readonly tracksService: TrackService) {}

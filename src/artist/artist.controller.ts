@@ -23,7 +23,7 @@ export class ArtistController {
   @ApiOperation({ summary: 'Get all artists' })
   @ApiResponse({
     status: 200,
-    description: 'List of artists.',
+    description: 'List of artists',
     type: [ArtistResponseDto],
   })
   getAll() {
@@ -31,15 +31,15 @@ export class ArtistController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get single artist by id' })
-  @ApiParam({ name: 'id', description: 'Artist UUID' })
+  @ApiOperation({ summary: 'Get an artist by id' })
+  @ApiParam({ name: 'id', description: 'UUID' })
   @ApiResponse({
     status: 200,
-    description: 'Artist found.',
+    description: 'Artist found',
     type: ArtistResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Invalid UUID.' })
-  @ApiResponse({ status: 404, description: 'Artist not found.' })
+  @ApiResponse({ status: 400, description: 'Invalid UUID' })
+  @ApiResponse({ status: 404, description: 'Artist not found' })
   getById(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.artistsService.findById(id);
   }
@@ -49,10 +49,10 @@ export class ArtistController {
   @ApiOperation({ summary: 'Create a new artist' })
   @ApiResponse({
     status: 201,
-    description: 'Artist created successfully.',
+    description: 'Artist created successfully',
     type: ArtistResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
   create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistsService.create(createArtistDto);
   }
@@ -62,11 +62,11 @@ export class ArtistController {
   @ApiParam({ name: 'id', description: 'Artist UUID' })
   @ApiResponse({
     status: 200,
-    description: 'Artist updated successfully.',
+    description: 'Artist updated successfully',
     type: ArtistResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Invalid UUID.' })
-  @ApiResponse({ status: 404, description: 'Artist not found.' })
+  @ApiResponse({ status: 400, description: 'Invalid UUID' })
+  @ApiResponse({ status: 404, description: 'Artist not found' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: CreateArtistDto,
@@ -78,9 +78,9 @@ export class ArtistController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete artist' })
   @ApiParam({ name: 'id', description: 'Artist UUID' })
-  @ApiResponse({ status: 204, description: 'Artist deleted successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid UUID.' })
-  @ApiResponse({ status: 404, description: 'Artist not found.' })
+  @ApiResponse({ status: 204, description: 'Artist deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid UUID' })
+  @ApiResponse({ status: 404, description: 'Artist not found' })
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     this.artistsService.delete(id);
   }

@@ -9,6 +9,7 @@ import { Artist } from './artist.interface';
 import { CreateArtistDto } from './dto/create.dto';
 import { AlbumService } from '../album/album.service';
 import { TrackService } from '../track/track.service';
+import { FavoriteService } from '../favorite/favorite.service';
 
 @Injectable()
 export class ArtistService {
@@ -16,9 +17,11 @@ export class ArtistService {
 
   constructor(
     @Inject(forwardRef(() => AlbumService))
-    private albumsService: AlbumService,
+    private albumService: AlbumService,
     @Inject(forwardRef(() => TrackService))
-    private tracksService: TrackService,
+    private trackService: TrackService,
+    @Inject(forwardRef(() => FavoriteService))
+    private favoriteService: FavoriteService,
   ) {}
 
   findAll(): Artist[] {
@@ -50,8 +53,9 @@ export class ArtistService {
 
   delete(id: string): void {
     if (!this.artists.has(id)) throw new NotFoundException('Artist not found');
-    this.albumsService.removeArtistFromAlbums(id);
-    this.tracksService.removeArtistFromTracks(id);
+    this.albumService.removeArtistFromAlbums(id);
+    this.trackService.removeArtistFromTracks(id);
+    this.favoriteService.removeArtist(id);
     this.artists.delete(id);
   }
 }

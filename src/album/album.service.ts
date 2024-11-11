@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Album } from './album.interface';
 import { CreateAlbumDto } from './dto/create.dto';
 import { TrackService } from '../track/track.service';
+import { FavoriteService } from '../favorite/favorite.service';
 
 @Injectable()
 export class AlbumService {
@@ -15,7 +16,9 @@ export class AlbumService {
 
   constructor(
     @Inject(forwardRef(() => TrackService))
-    private tracksService: TrackService,
+    private trackService: TrackService,
+    @Inject(forwardRef(() => FavoriteService))
+    private favoriteService: FavoriteService,
   ) {}
 
   findAll(): Album[] {
@@ -47,7 +50,8 @@ export class AlbumService {
 
   delete(id: string): void {
     if (!this.albums.has(id)) throw new NotFoundException('Album not found');
-    this.tracksService.removeAlbumFromTracks(id);
+    this.trackService.removeAlbumFromTracks(id);
+    this.favoriteService.removeAlbum(id);
     this.albums.delete(id);
   }
 

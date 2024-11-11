@@ -10,9 +10,6 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create.dto';
-import { UpdatePasswordDto } from './dto/update.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -20,6 +17,9 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/create.dto';
+import { UpdatePasswordDto } from './dto/update.dto';
+import { UserService } from './user.service';
 import { UserResponseDto } from './dto/response.dto';
 
 @ApiTags('Users')

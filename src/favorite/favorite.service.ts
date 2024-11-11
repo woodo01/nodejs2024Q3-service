@@ -43,7 +43,8 @@ export class FavoriteService {
 
   addArtistToFavorites(artistId: string) {
     this.assertArtistExists(artistId);
-    if (!this.favorites.artists.includes(artistId)) this.favorites.artists.push(artistId);
+    if (!this.favorites.artists.includes(artistId))
+      this.favorites.artists.push(artistId);
   }
 
   removeArtistFromFavorites(artistId: string) {
@@ -54,7 +55,8 @@ export class FavoriteService {
 
   addAlbumToFavorites(albumId: string) {
     this.assertAlbumExists(albumId);
-    if (!this.favorites.albums.includes(albumId)) this.favorites.albums.push(albumId);
+    if (!this.favorites.albums.includes(albumId))
+      this.favorites.albums.push(albumId);
   }
 
   removeAlbumFromFavorites(albumId: string) {
@@ -65,7 +67,8 @@ export class FavoriteService {
 
   addTrackToFavorites(trackId: string) {
     this.assertTrackExists(trackId);
-    if (!this.favorites.tracks.includes(trackId)) this.favorites.tracks.push(trackId);
+    if (!this.favorites.tracks.includes(trackId))
+      this.favorites.tracks.push(trackId);
   }
 
   removeTrackFromFavorites(trackId: string) {

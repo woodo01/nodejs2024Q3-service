@@ -7,20 +7,28 @@
 
 ## Downloading
 
-```
-git clone {repository URL}
+```shell
+git clone https://github.com/woodo01/nodejs2024Q3-service.git
 ```
 
-## Installing NPM modules
-
+### Change directory
+```shell
+cd nodejs2024Q3-service
 ```
+
+### Switch branch
+```shell
+git checkout develop
+```
+
+### Install NPM modules
+```shell
 npm install
 ```
 
 ## Running application
-
-```
-npm start
+```shell
+npm run start
 ```
 
 After starting the app on port (4000 as default) you can open

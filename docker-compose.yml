@@ -4,31 +4,30 @@ services:
         build: .
         container_name: rest_service
         restart: always
+        env_file: .env
         networks:
             - rest_network
-        environment:
-            - DATABASE_URL=postgresql://user:password@db:5432/dbname
         volumes:
-            - ./src:/app/src
-        command: sh -c "npm install && npm run dev"
+            - .:/app
+        ports:
+            - '${PORT}:${PORT}'
 
     db:
         image: postgres:13-alpine
         container_name: postgres_db
         restart: always
-        environment:
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: dbname
+        env_file: .env
         networks:
             - rest_network
         volumes:
             - postgres_data:/var/lib/postgresql/data
             - postgres_logs:/var/log/postgresql
+        ports:
+            - '${DB_PORT}:${DB_PORT}'
 
 networks:
     rest_network:
-        driver: bridge
+        driver: ${NETWORK_DRIVER}
 
 volumes:
     postgres_data:

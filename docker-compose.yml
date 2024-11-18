@@ -1,7 +1,7 @@
 version: '3.8'
 services:
     app:
-        build: .
+        image: ivansigaev/nodejs2024q3-service-app
         container_name: rest_service
         restart: always
         env_file: .env
@@ -31,7 +31,7 @@ services:
             retries: 10
 
     migrate:
-        build: .
+        image: ivansigaev/nodejs2024q3-service-app
         container_name: migrate
         restart: 'on-failure'
         depends_on:

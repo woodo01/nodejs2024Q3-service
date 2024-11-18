@@ -27,8 +27,8 @@ export class ArtistController {
     description: 'List of artists',
     type: [ArtistResponseDto],
   })
-  getAll() {
-    return this.artistsService.findAll();
+  async getAll() {
+    return await this.artistsService.findAll();
   }
 
   @Get(':id')
@@ -41,8 +41,8 @@ export class ArtistController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID' })
   @ApiResponse({ status: 404, description: 'Artist not found' })
-  getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.artistsService.findById(id);
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.artistsService.findById(id);
   }
 
   @Post()
@@ -54,8 +54,8 @@ export class ArtistController {
     type: ArtistResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistsService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistsService.create(createArtistDto);
   }
 
   @Put(':id')
@@ -68,11 +68,11 @@ export class ArtistController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID' })
   @ApiResponse({ status: 404, description: 'Artist not found' })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: CreateArtistDto,
   ) {
-    return this.artistsService.update(id, updateArtistDto);
+    return await this.artistsService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
@@ -82,7 +82,7 @@ export class ArtistController {
   @ApiResponse({ status: 204, description: 'Artist deleted successfully' })
   @ApiResponse({ status: 400, description: 'Invalid UUID' })
   @ApiResponse({ status: 404, description: 'Artist not found' })
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.artistsService.delete(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.artistsService.delete(id);
   }
 }

@@ -7,8 +7,6 @@ services:
         env_file: .env
         networks:
             - rest_network
-        volumes:
-            - .:/app
         ports:
             - '${PORT}:${PORT}'
 
@@ -24,6 +22,25 @@ services:
             - postgres_logs:/var/log/postgresql
         ports:
             - '${DB_PORT}:${DB_PORT}'
+        depends_on:
+            - app
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+            interval: 1s
+            timeout: 5s
+            retries: 10
+
+    migrate:
+        build: .
+        container_name: migrate
+        restart: 'on-failure'
+        depends_on:
+            db:
+                condition: service_healthy
+        networks:
+            - rest_network
+        env_file: .env
+        command: npm run migrate
 
 networks:
     rest_network:

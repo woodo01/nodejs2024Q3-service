@@ -91,7 +91,7 @@ To run tests
 npm run test
 ```
 
-To vulnerabilities scanning
+To scan vulnerabilities
 ```bash
 npm run docker:scan
 ```

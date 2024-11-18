@@ -23,7 +23,8 @@
     "swagger:export": "ts-node util/export-swagger.ts",
     "migrate": "npx prisma migrate dev --preview-feature --skip-generate",
     "docker:scan": "docker scout cves ivansigaev/nodejs2024q3-service-app:latest",
-    "docker:compose": "docker compose up --build --force-recreate -d"
+    "docker:compose": "docker compose up --build --force-recreate -d",
+    "docker:compose:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build --force-recreate -d"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -66,6 +67,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
+    "nodemon": "^3.1.7",
     "prettier": "^2.3.2",
     "prisma": "^5.22.0",
     "source-map-support": "^0.5.20",

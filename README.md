@@ -83,7 +83,12 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 To up app
 ```bash
-docker compose up --build --force-recreate -d
+npm run docker:compose
+```
+
+Dev mode
+```bash
+npm run docker:compose:dev
 ```
 
 To run tests

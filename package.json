@@ -21,7 +21,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "swagger:export": "ts-node util/export-swagger.ts",
-    "migrate": "npx prisma migrate dev --preview-feature --skip-generate"
+    "migrate": "npx prisma migrate dev --preview-feature --skip-generate",
+    "docker:scan": "docker scout cves ivansigaev/nodejs2024q3-service-app:latest",
+    "docker:compose": "docker compose up --build --force-recreate -d"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

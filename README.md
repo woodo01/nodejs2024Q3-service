@@ -78,3 +78,20 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+## App in Docker
+
+To up app
+```bash
+docker compose up --build --force-recreate -d
+```
+
+To run tests
+```bash
+npm run test
+```
+
+To vulnerabilities scanning
+```bash
+npm run docker:scan
+```

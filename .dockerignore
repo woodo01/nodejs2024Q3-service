@@ -1,0 +1,13 @@
+.git
+coverage
+dist
+node_modules
+test
+.DS_Store
+.env
+.env.local
+.gitignore
+*.spec.ts
+npm-debug.log
+pnpm-debug.log
+yarn-error.log

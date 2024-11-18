@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+    app:
+        build: .
+        container_name: rest_service
+        restart: always
+        networks:
+            - rest_network
+        environment:
+            - DATABASE_URL=postgresql://user:password@db:5432/dbname
+        volumes:
+            - ./src:/app/src
+        command: sh -c "npm install && npm run dev"
+
+    db:
+        image: postgres:13-alpine
+        container_name: postgres_db
+        restart: always
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: dbname
+        networks:
+            - rest_network
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - postgres_logs:/var/log/postgresql
+
+networks:
+    rest_network:
+        driver: bridge
+
+volumes:
+    postgres_data:
+    postgres_logs:

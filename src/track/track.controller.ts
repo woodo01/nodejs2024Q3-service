@@ -27,8 +27,8 @@ export class TrackController {
     description: 'List of tracks',
     type: [TrackResponseDto],
   })
-  getAll() {
-    return this.tracksService.findAll();
+  async getAll() {
+    return await this.tracksService.findAll();
   }
 
   @Get(':id')
@@ -41,8 +41,8 @@ export class TrackController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID.' })
   @ApiResponse({ status: 404, description: 'Track not found' })
-  getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.tracksService.findById(id);
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.tracksService.findById(id);
   }
 
   @Post()
@@ -54,8 +54,8 @@ export class TrackController {
     type: TrackResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.tracksService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.tracksService.create(createTrackDto);
   }
 
   @Put(':id')
@@ -68,11 +68,11 @@ export class TrackController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID' })
   @ApiResponse({ status: 404, description: 'Track not found' })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTrackDto: CreateTrackDto,
   ) {
-    return this.tracksService.update(id, updateTrackDto);
+    return await this.tracksService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
@@ -82,7 +82,7 @@ export class TrackController {
   @ApiResponse({ status: 204, description: 'Track deleted successfully' })
   @ApiResponse({ status: 400, description: 'Invalid UUID' })
   @ApiResponse({ status: 404, description: 'Track not found' })
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.tracksService.delete(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.tracksService.delete(id);
   }
 }

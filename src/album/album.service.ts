@@ -1,63 +1,64 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { Album } from './album.interface';
 import { CreateAlbumDto } from './dto/create.dto';
-import { TrackService } from '../track/track.service';
-import { FavoriteService } from '../favorite/favorite.service';
+import { StorageService } from '../storage/storage.service';
+import { Album } from '@prisma/client';
 
 @Injectable()
 export class AlbumService {
-  private albums = new Map<string, Album>();
+  constructor(private storage: StorageService) {}
 
-  constructor(
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => FavoriteService))
-    private favoriteService: FavoriteService,
-  ) {}
-
-  findAll(): Album[] {
-    return Array.from(this.albums.values());
+  async findAll(): Promise<Album[]> {
+    return this.storage.album.findMany();
   }
 
-  findById(id: string): Album {
-    if (!this.albums.has(id)) throw new NotFoundException('Album not found');
+  async findById(id: string): Promise<Album> {
+    const album = await this.storage.album.findUnique({ where: { id } });
 
-    return this.albums.get(id);
-  }
-
-  create(createAlbumDto: CreateAlbumDto): Album {
-    const newAlbum: Album = {
-      id: uuidv4(),
-      ...createAlbumDto,
-    };
-    this.albums.set(newAlbum.id, newAlbum);
-
-    return newAlbum;
-  }
-
-  update(id: string, updateAlbumDto: CreateAlbumDto): Album {
-    const album = this.findById(id);
-    Object.assign(album, updateAlbumDto);
+    if (!album) throw new NotFoundException('Album not found');
 
     return album;
   }
 
-  delete(id: string): void {
-    if (!this.albums.has(id)) throw new NotFoundException('Album not found');
-    this.trackService.removeAlbumFromTracks(id);
-    this.favoriteService.removeAlbum(id);
-    this.albums.delete(id);
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return this.storage.album.create({
+      data: {
+        name: createAlbumDto.name,
+        year: createAlbumDto.year,
+        artist: {
+          connect: createAlbumDto.artistId ? { id: createAlbumDto.artistId } : undefined,
+        },
+      },
+    });
   }
 
-  removeArtistFromAlbums(artistId: string) {
-    this.albums.forEach((album) => {
-      if (album.artistId === artistId) album.artistId = null;
+  async update(id: string, updateAlbumDto: CreateAlbumDto): Promise<Album> {
+    const album = await this.storage.album.findUnique({ where: { id } });
+    if (!album) throw new NotFoundException('Album not found');
+
+    return this.storage.album.update({
+      where: { id },
+      data: {
+        name: updateAlbumDto.name,
+        year: updateAlbumDto.year,
+        artist: {
+          connect: updateAlbumDto.artistId
+            ? { id: updateAlbumDto.artistId }
+            : undefined,
+        },
+      },
     });
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await this.storage.album.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Album not found');
+    }
+    this.storage.favoriteAlbum.deleteMany({ where: { albumId: id } });
+    this.storage.track.deleteMany({ where: { albumId: id } });
   }
 }

@@ -3,69 +3,112 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { User } from './user.interface';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdatePasswordDto } from './dto/update.dto';
+import { StorageService } from '../storage/storage.service';
+import { UserResponseDto } from './dto/response.dto';
 
 @Injectable()
 export class UserService {
-  private users = new Map<string, User>();
+  constructor(private storeage: StorageService) {}
 
-  findAll(): Omit<User, 'password'>[] {
-    return Array.from(this.users.values()).map((user) => {
-      const userDto = { ...user };
-      delete userDto.password;
-      return userDto;
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.storeage.user.findMany({
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
+    return users.map((user) => ({
+      ...user,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+    }));
   }
 
-  findById(id: string): Omit<User, 'password'> {
-    if (!this.users.has(id)) throw new NotFoundException('User not found');
-
-    const userDto = { ...this.users.get(id) };
-    delete userDto.password;
-    return userDto;
-  }
-
-  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
-    const newUser: User = {
-      id: uuidv4(),
-      login: createUserDto.login,
-      password: createUserDto.password,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+  async findById(id: string): Promise<UserResponseDto> {
+    const user = await this.storeage.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return {
+      ...user,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
     };
-    this.users.set(newUser.id, newUser);
-
-    const newUserDto = { ...newUser };
-    delete newUserDto.password;
-    return newUserDto;
   }
 
-  update(
+  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    const user = await this.storeage.user.create({
+      data: {
+        login: createUserDto.login,
+        password: createUserDto.password,
+        version: 1,
+      },
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return {
+      ...user,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+    };
+  }
+
+  async update(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ): Omit<User, 'password'> {
-    if (!this.users.has(id)) throw new NotFoundException('User not found');
+  ): Promise<UserResponseDto> {
+    const user = await this.storeage.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
 
-    const user = this.users.get(id);
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
-
-    const updatedUseDto = { ...user };
-    delete updatedUseDto.password;
-    return updatedUseDto;
+    const updatedVersion = user.version + 1;
+    const updUser = await this.storeage.user.update({
+      where: { id },
+      data: {
+        password: updatePasswordDto.newPassword,
+        version: updatedVersion,
+        updatedAt: new Date(),
+      },
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return {
+      ...updUser,
+      createdAt: updUser.createdAt.getTime(),
+      updatedAt: updUser.updatedAt.getTime(),
+    };
   }
 
-  delete(id: string): void {
-    if (!this.users.has(id)) throw new NotFoundException('User not found');
-    this.users.delete(id);
+  async delete(id: string): Promise<void> {
+    try {
+      await this.storeage.user.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('User not found');
+    }
   }
 }

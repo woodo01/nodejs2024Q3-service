@@ -4,58 +4,46 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { Artist } from './artist.interface';
 import { CreateArtistDto } from './dto/create.dto';
-import { AlbumService } from '../album/album.service';
-import { TrackService } from '../track/track.service';
-import { FavoriteService } from '../favorite/favorite.service';
+import { StorageService } from '../storage/storage.service';
+import { Artist } from '@prisma/client';
 
 @Injectable()
 export class ArtistService {
-  private artists = new Map<string, Artist>();
+  constructor(private storage: StorageService) {}
 
-  constructor(
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => FavoriteService))
-    private favoriteService: FavoriteService,
-  ) {}
-
-  findAll(): Artist[] {
-    return Array.from(this.artists.values());
+  async findAll(): Promise<Artist[]> {
+    return this.storage.artist.findMany();
   }
 
-  findById(id: string): Artist {
-    if (!this.artists.has(id)) throw new NotFoundException('Artist not found');
+  async findById(id: string): Promise<Artist> {
+    const artist = await this.storage.artist.findUnique({ where: { id } });
 
-    return this.artists.get(id);
-  }
-
-  create(createArtistDto: CreateArtistDto): Artist {
-    const newArtist: Artist = {
-      id: uuidv4(),
-      ...createArtistDto,
-    };
-    this.artists.set(newArtist.id, newArtist);
-
-    return newArtist;
-  }
-
-  update(id: string, updateArtistDto: CreateArtistDto): Artist {
-    const artist = this.findById(id);
-    Object.assign(artist, updateArtistDto);
+    if (!artist) throw new NotFoundException('Artist not found');
 
     return artist;
   }
 
-  delete(id: string): void {
-    if (!this.artists.has(id)) throw new NotFoundException('Artist not found');
-    this.albumService.removeArtistFromAlbums(id);
-    this.trackService.removeArtistFromTracks(id);
-    this.favoriteService.removeArtist(id);
-    this.artists.delete(id);
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    return this.storage.artist.create({ data: createArtistDto });
+  }
+
+  async update(id: string, updateArtistDto: CreateArtistDto): Promise<Artist> {
+    try {
+      return await this.storage.artist.update({
+        where: { id },
+        data: updateArtistDto,
+      });
+    } catch {
+      throw new NotFoundException('Artist not found');
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await this.storage.artist.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Artist not found');
+    }
   }
 }

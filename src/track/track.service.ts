@@ -1,65 +1,76 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { Track } from './track.interface';
 import { CreateTrackDto } from './dto/create.dto';
-import { FavoriteService } from '../favorite/favorite.service';
+import { StorageService } from '../storage/storage.service';
+import { Track } from '@prisma/client';
 
 @Injectable()
 export class TrackService {
-  private tracks = new Map<string, Track>();
+  constructor(private storage: StorageService) {}
 
-  constructor(
-    @Inject(forwardRef(() => FavoriteService))
-    private favoriteService: FavoriteService,
-  ) {}
-
-  findAll(): Track[] {
-    return Array.from(this.tracks.values());
+  async findAll(): Promise<Track[]> {
+    return this.storage.track.findMany();
   }
 
-  findById(id: string): Track {
-    if (!this.tracks.has(id)) throw new NotFoundException('Track not found');
+  async findById(id: string): Promise<Track> {
+    const track = await this.storage.track.findUnique({ where: { id } });
 
-    return this.tracks.get(id);
-  }
-
-  create(createTrackDto: CreateTrackDto): Track {
-    const newTrack: Track = {
-      id: uuidv4(),
-      ...createTrackDto,
-    };
-    this.tracks.set(newTrack.id, newTrack);
-
-    return newTrack;
-  }
-
-  update(id: string, updateTrackDto: CreateTrackDto): Track {
-    const track = this.findById(id);
-    Object.assign(track, updateTrackDto);
+    if (!track) throw new NotFoundException('Track not found');
 
     return track;
   }
 
-  delete(id: string): void {
-    if (!this.tracks.has(id)) throw new NotFoundException('Track not found');
-    this.favoriteService.removeTrack(id);
-    this.tracks.delete(id);
-  }
-
-  removeArtistFromTracks(artistId: string) {
-    this.tracks.forEach((track) => {
-      if (track.artistId === artistId) track.artistId = null;
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    return this.storage.track.create({
+      data: {
+        name: createTrackDto.name,
+        duration: createTrackDto.duration,
+        artist: {
+          connect: createTrackDto.artistId
+            ? { id: createTrackDto.artistId }
+            : undefined,
+        },
+        album: {
+          connect: createTrackDto.albumId
+            ? { id: createTrackDto.albumId }
+            : undefined,
+        },
+      },
     });
   }
 
-  removeAlbumFromTracks(albumId: string) {
-    this.tracks.forEach((track) => {
-      if (track.albumId === albumId) track.albumId = null;
+  async update(id: string, updateTrackDto: CreateTrackDto): Promise<Track> {
+    const track = await this.storage.track.findUnique({ where: { id } });
+
+    if (!track) throw new NotFoundException('Track not found');
+
+    return this.storage.track.update({
+      where: { id },
+      data: {
+        name: updateTrackDto.name,
+        duration: updateTrackDto.duration,
+        artist: {
+          connect: updateTrackDto.artistId
+            ? { id: updateTrackDto.artistId }
+            : undefined,
+        },
+        album: {
+          connect: updateTrackDto.albumId
+            ? { id: updateTrackDto.albumId }
+            : undefined,
+        },
+      },
     });
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await this.storage.track.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Track not found');
+    }
+    await this.storage.favoriteTrack.deleteMany({ where: { trackId: id } });
   }
 }

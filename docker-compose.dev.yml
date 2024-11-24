@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  app:
+    environment:
+      - NODE_ENV=development
+    command: ["npx", "nodemon", "--watch", "src", "--exec", "ts-node", "src/main.ts"]
+    volumes:
+      - ./src:/app/src

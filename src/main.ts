@@ -6,11 +6,13 @@ import { Request, Response, NextFunction } from 'express';
 import { JwtGuard } from './auth/jwt.guard';
 import { AppModule } from './app.module';
 import { LoggingService } from './logging/logging.service';
+import { LogExceptionFilter } from './logging/exeption.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const loggingService = app.get(LoggingService);
   app.useLogger(loggingService);
+  app.useGlobalFilters(new LogExceptionFilter(loggingService));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(
     new (class extends JwtGuard {

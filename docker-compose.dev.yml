@@ -6,3 +6,4 @@ services:
     command: ["npx", "nodemon", "--watch", "src", "--exec", "ts-node", "src/main.ts"]
     volumes:
       - ./src:/app/src
+      - ./logs:/app/logs

@@ -24,9 +24,9 @@ export class LogExceptionFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException ? exception.getResponse() : exception;
 
-    const errorMessage = `${request.method} ${request.url} - ${status} - ${JSON.stringify(
-      message,
-    )}`;
+    const errorMessage = `${request.method} ${
+      request.url
+    } - ${status} - ${JSON.stringify(message)}`;
     const errorStack = exception instanceof Error ? exception.stack : '';
 
     this.loggingService.error(errorMessage, errorStack, 'ExceptionFilter');

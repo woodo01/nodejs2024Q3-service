@@ -21,11 +21,15 @@ import { CreateUserDto } from './dto/create.dto';
 import { UpdatePasswordDto } from './dto/update.dto';
 import { UserService } from './user.service';
 import { UserResponseDto } from './dto/response.dto';
+import { LoggingService } from '../logging/logging.service';
 
 @ApiTags('Users')
 @Controller('user')
 export class UserController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(
+    private readonly usersService: UserService,
+    private readonly loggingService: LoggingService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })

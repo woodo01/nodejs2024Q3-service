@@ -10,6 +10,7 @@ import { FavoriteModule } from './favorite/favorite.module';
 import { StorageModule } from './storage/storage.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
     FavoriteModule,
     StorageModule,
     AuthModule,
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

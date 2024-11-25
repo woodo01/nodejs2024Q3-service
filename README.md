@@ -100,3 +100,11 @@ To scan vulnerabilities
 ```bash
 npm run docker:scan
 ```
+
+## Error Handling and Authentication
+
+Logs should in logs directory
+
+To signup, use http://localhost:4000/signup POST request with raw body {"login": "admin", "password": "123123"}
+
+To login, use http://localhost:4000/login POST request with raw body {"login": "admin", "password": "123123"}

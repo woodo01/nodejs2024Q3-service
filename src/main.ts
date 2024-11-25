@@ -6,7 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import { JwtGuard } from './auth/jwt.guard';
 import { AppModule } from './app.module';
 import { LoggingService } from './logging/logging.service';
-import { LogExceptionFilter } from './logging/exeption.filter';
+import { LogExceptionFilter } from './logging/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

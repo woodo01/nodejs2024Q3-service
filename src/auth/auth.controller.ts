@@ -23,14 +23,14 @@ export class AuthController {
     return await this.authService.signup(authDto);
   }
 
-  @Post('signin')
-  @ApiResponse({ status: 200, description: 'Successfully signin' })
+  @Post('login')
+  @ApiResponse({ status: 200, description: 'Successfully login' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({
     status: 403,
     description: 'Authentication failed',
   })
-  async signin(@Body() authDto: AuthDto) {
+  async login(@Body() authDto: AuthDto) {
     return await this.authService.signin(authDto);
   }
 

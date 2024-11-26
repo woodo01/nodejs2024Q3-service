@@ -10,10 +10,10 @@ import { UserResponseDto } from './dto/response.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private storeage: StorageService) {}
+  constructor(private storage: StorageService) {}
 
   async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.storeage.user.findMany({
+    const users = await this.storage.user.findMany({
       select: {
         id: true,
         login: true,
@@ -30,7 +30,7 @@ export class UserService {
   }
 
   async findById(id: string): Promise<UserResponseDto> {
-    const user = await this.storeage.user.findUnique({
+    const user = await this.storage.user.findUnique({
       where: { id },
       select: {
         id: true,
@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const user = await this.storeage.user.create({
+    const user = await this.storage.user.create({
       data: {
         login: createUserDto.login,
         password: createUserDto.password,
@@ -74,7 +74,7 @@ export class UserService {
     id: string,
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<UserResponseDto> {
-    const user = await this.storeage.user.findUnique({ where: { id } });
+    const user = await this.storage.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
 
     if (user.password !== updatePasswordDto.oldPassword) {
@@ -82,7 +82,7 @@ export class UserService {
     }
 
     const updatedVersion = user.version + 1;
-    const updUser = await this.storeage.user.update({
+    const updUser = await this.storage.user.update({
       where: { id },
       data: {
         password: updatePasswordDto.newPassword,
@@ -106,9 +106,13 @@ export class UserService {
 
   async delete(id: string): Promise<void> {
     try {
-      await this.storeage.user.delete({ where: { id } });
+      await this.storage.user.delete({ where: { id } });
     } catch {
       throw new NotFoundException('User not found');
     }
+  }
+
+  async findByLogin(login: string) {
+    return this.storage.user.findUnique({ where: { login } });
   }
 }

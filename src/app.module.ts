@@ -8,6 +8,9 @@ import { AlbumModule } from './album/album.module';
 import { TrackModule } from './track/track.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { StorageModule } from './storage/storage.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtStrategy } from './auth/jwt.strategy';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -20,8 +23,10 @@ import { StorageModule } from './storage/storage.module';
     TrackModule,
     FavoriteModule,
     StorageModule,
+    AuthModule,
+    LoggingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}

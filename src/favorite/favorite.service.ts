@@ -17,11 +17,13 @@ export class FavoriteService {
     tracks: Track[];
   }> {
     return {
-      artists: await this.storage.favoriteArtist.findMany().then((favorites) => {
-        return this.storage.artist.findMany({
-          where: { id: { in: favorites.map((fav) => fav.artistId) } },
-        });
-      }),
+      artists: await this.storage.favoriteArtist
+        .findMany()
+        .then((favorites) => {
+          return this.storage.artist.findMany({
+            where: { id: { in: favorites.map((fav) => fav.artistId) } },
+          });
+        }),
       albums: await this.storage.favoriteAlbum.findMany().then((favorites) => {
         return this.storage.album.findMany({
           where: { id: { in: favorites.map((fav) => fav.albumId) } },

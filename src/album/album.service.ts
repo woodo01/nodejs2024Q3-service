@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create.dto';
 import { StorageService } from '../storage/storage.service';
 import { Album } from '@prisma/client';
@@ -28,7 +25,9 @@ export class AlbumService {
         name: createAlbumDto.name,
         year: createAlbumDto.year,
         artist: {
-          connect: createAlbumDto.artistId ? { id: createAlbumDto.artistId } : undefined,
+          connect: createAlbumDto.artistId
+            ? { id: createAlbumDto.artistId }
+            : undefined,
         },
       },
     });
